@@ -78,34 +78,46 @@ var UIController= (function(){
 
 var controller=(function(budgetCtrl, UICtrl){
 
-    var DOM = UICtrl.getDOMstrings();
+    //private function no expose to the public
+    var setupEventListener=function () {
 
+        var DOM = UICtrl.getDOMstrings();
+        /* Vamos a crear el event Listener 
+        1. Necesitamos el elemento al que vamos a añadir el evento lo obtenemos por medio de su clase
+        */
+         document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddIem);
+
+         //vamos a validar que con este eveto se pueda agregar el ingreso o gasto al dar enter 
+
+         document.addEventListener('keypress', function (event) {
+             if (event.keyCode === 13 || event.which === 13) {
+
+                 ctrlAddIem();
+
+             }
+         });
+    }
+
+    //private function no expose to the public
     //creamos esta funcion para que no se repita codigo al presionar el btn y tmb al dar enter
     var ctrlAddIem= function(){
         //1. Get the filed input data 
         var input=UICtrl.getInput();
-        console.log(input);
-
         //2. Add the items to the budget controller
         //3. Add the item to the UI
         //4. Calculate the budget
         //5. Display de budget total
 
+    };
+
+    //creamos a public return function
+    return {
+        init:function () {
+            console.log('Aplication has started.');
+            setupEventListener();
+        } 
     }
 
-    /* Vamos a crear el event Listener 
-        1. Necesitamos el elemento al que vamos a añadir el evento lo obtenemos por medio de su clase
-    */
-   document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddIem);
-
-   //vamos a validar que con este eveto se pueda agregar el ingreso o gasto al dar enter 
-
-   document.addEventListener('keypress', function(event){
-        if(event.keyCode === 13 || event.which===13){
-            
-            ctrlAddIem();
-
-        }
-   });
-
 })(budgetController,UIController);
+
+controller.init();
