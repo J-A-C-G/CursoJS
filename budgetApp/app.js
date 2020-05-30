@@ -35,7 +35,36 @@ var budgetController = (function ( /*aqui puede ir parametros*/ ) {
 
 var UIController= (function(){
 
-    //some code
+    var DOMstrings={
+        inputType: '.add__type',
+        inputDescription: '.add__description',
+        inputValue: '.add__value',
+        inputBtn: '.add__btn',
+    };
+
+    return {
+        getInput: function(){
+
+            /*
+            //En orden para pasar los tres valores tenemos que crear un objeto
+            //obtenemos en valor de la clase add__type que puede ser inc or exp
+            var type= document.querySelector('.add__type').value;
+            var description=document.querySelector('.add_description').value;
+            var value=document.querySelector('.add__value').value;
+            */
+           //creamos el objeto
+           return{
+               type:document.querySelector(DOMstrings.inputType).value,
+               description: document.querySelector(DOMstrings.inputDescription).value,
+               value: document.querySelector(DOMstrings.inputValue).value
+           }
+        },
+
+        //exponemos los DOMstrings al publico
+        getDOMstrings: function(){
+            return DOMstrings;
+        }
+    }
 
 })();
 
@@ -49,21 +78,25 @@ var UIController= (function(){
 
 var controller=(function(budgetCtrl, UICtrl){
 
+    var DOM = UICtrl.getDOMstrings();
+
     //creamos esta funcion para que no se repita codigo al presionar el btn y tmb al dar enter
     var ctrlAddIem= function(){
         //1. Get the filed input data 
+        var input=UICtrl.getInput();
+        console.log(input);
+
         //2. Add the items to the budget controller
         //3. Add the item to the UI
         //4. Calculate the budget
         //5. Display de budget total
 
-        console.log("it works");
     }
 
     /* Vamos a crear el event Listener 
         1. Necesitamos el elemento al que vamos a añadir el evento lo obtenemos por medio de su clase
     */
-   document.querySelector('.add__btn').addEventListener('click', ctrlAddIem);
+   document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddIem);
 
    //vamos a validar que con este eveto se pueda agregar el ingreso o gasto al dar enter 
 
