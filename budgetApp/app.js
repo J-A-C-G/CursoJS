@@ -25,24 +25,7 @@
 
 var budgetController = (function ( /*aqui puede ir parametros*/ ) {
 
-    var x=23; // variable
-    //Private function
-    var add=function(a){
-        return x+a;
-    }
-
-    return {
-        /*
-        budgetController solo puede acceder a este metodo
-        Esto trabaja gracias a Closures
-        closures a inner fuction has always access to a variables
-        and parametors of its outter fuction even it this one has return
-        public fuction
-        */
-        publicTest: function(b){
-            return add(b);
-        }
-    }
+    //some code
 
 })(/*aqui se declara los parametros*/);
 
@@ -51,7 +34,9 @@ var budgetController = (function ( /*aqui puede ir parametros*/ ) {
 /* -------------------------------------------------------------------------- */
 
 var UIController= (function(){
+
     //some code
+
 })();
 
 
@@ -64,12 +49,30 @@ var UIController= (function(){
 
 var controller=(function(budgetCtrl, UICtrl){
 
-    var z = budgetController.publicTest(5);
-    //This is the only way to get access from outside
-    return{
-        anotherPublic:function(){
-            console.log(z);
-            console.log("fin");
-        }
+    //creamos esta funcion para que no se repita codigo al presionar el btn y tmb al dar enter
+    var ctrlAddIem= function(){
+        //1. Get the filed input data 
+        //2. Add the items to the budget controller
+        //3. Add the item to the UI
+        //4. Calculate the budget
+        //5. Display de budget total
+
+        console.log("it works");
     }
+
+    /* Vamos a crear el event Listener 
+        1. Necesitamos el elemento al que vamos a añadir el evento lo obtenemos por medio de su clase
+    */
+   document.querySelector('.add__btn').addEventListener('click', ctrlAddIem);
+
+   //vamos a validar que con este eveto se pueda agregar el ingreso o gasto al dar enter 
+
+   document.addEventListener('keypress', function(event){
+        if(event.keyCode === 13 || event.which===13){
+            
+            ctrlAddIem();
+
+        }
+   });
+
 })(budgetController,UIController);
