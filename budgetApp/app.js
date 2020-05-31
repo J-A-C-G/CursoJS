@@ -25,9 +25,40 @@
 
 var budgetController = (function ( /*aqui puede ir parametros*/ ) {
 
-    //some code
+    //Aqui vamos a crear los constructores
+    //Los constructores se crean con mayusculas para diferenciarlos
+    var Expense = function (id, description, value) {
+        this.id = id;
+        this.description = description;
+        this.value = value;
+    };
+
+    var Income = function (id, description, value) {
+        this.id = id;
+        this.description = description;
+        this.value = value;
+    };
+
+    /*//We can do it like this pero es mejor guardarlo como un objeto
+    var allExpenses=[];
+    var allIncomes=[];
+    var totalExpenses=0;
+    */
+
+    //es mejor guardar el data asi
+    var data={
+        allItems:{
+            exp:[],
+            inc:[]
+        },
+        totals:{
+            exp:0,
+            inc:0
+        }
+    } 
 
 })(/*aqui se declara los parametros*/);
+
 
 /* -------------------------------------------------------------------------- */
 /*                                UI CONTROLLER                               */
@@ -120,4 +151,5 @@ var controller=(function(budgetCtrl, UICtrl){
 
 })(budgetController,UIController);
 
+//Para que se ejecute cuando termina de cargarse la pagina
 controller.init();
