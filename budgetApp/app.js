@@ -46,16 +46,41 @@ var budgetController = (function ( /*aqui puede ir parametros*/ ) {
     */
 
     //es mejor guardar el data asi
-    var data={
-        allItems:{
-            exp:[],
-            inc:[]
+    var data={//object
+        allItems:{//object
+            exp:[],//array
+            inc:[]//array
         },
-        totals:{
-            exp:0,
-            inc:0
+        totals:{//object
+            exp:0,//array
+            inc:0//array
         }
-    } 
+    } ;
+
+    return{
+        addItem:function(type, des, val){
+            var newItem, ID;
+            //create a new ID
+            if(data.allItems[type].lenght>0){
+            ID=data.allItems[type][data.allItems[type].lenght-1].id + 1;
+            }else{
+                ID=0;
+            }
+            //create new item based on inc or exp type
+            if(type==='exp'){
+            newItem = new Expense(ID, des, val);
+            }else if(type==='inc'){
+            newItem= new Income(ID, des,val);    
+            }
+            //Push into our data 
+            data.allItems[type].push(newItem);
+            return newItem;
+        },
+
+        testing: function(){
+            console.log(data);
+        }
+    }
 
 })(/*aqui se declara los parametros*/);
 
@@ -132,10 +157,13 @@ var controller=(function(budgetCtrl, UICtrl){
     //private function no expose to the public
     //creamos esta funcion para que no se repita codigo al presionar el btn y tmb al dar enter
     var ctrlAddIem= function(){
+        var input, newItem;
         //1. Get the filed input data 
-        var input=UICtrl.getInput();
+        input=UICtrl.getInput();
         //2. Add the items to the budget controller
+        newItem=budgetCtrl.addItem(input.type,input.description,input.value);
         //3. Add the item to the UI
+
         //4. Calculate the budget
         //5. Display de budget total
 
