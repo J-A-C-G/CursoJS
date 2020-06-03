@@ -219,21 +219,36 @@ var controller=(function(budgetCtrl, UICtrl){
          });
     }
 
+    //We create a new fuction to avoid RY
+    //we going to use when we add & delete
+    var updateBudget=function () {
+
+        //1. Calculate the Budget
+
+        //2. Return the Budget
+        //3. Display the budget on the UI
+    }
+
+
     //private function no expose to the public
     //creamos esta funcion para que no se repita codigo al presionar el btn y tmb al dar enter
     var ctrlAddIem= function(){
         var input, newItem;
         //1. Get the filed input data 
         input=UICtrl.getInput();
-        //2. Add the items to the budget controller
-        newItem=budgetCtrl.addItem(input.type,input.description,input.value);
-        //3. Add the item to the UI
-        UICtrl.addListItem(newItem,input.type);
-        //4. Clear fields
-        UICtrl.clearFields();
-        //4. Calculate the budget
-        //5. Display de budget total
 
+        //input descripcion culd not be empty and input value needs to be a number
+        if(input.description !=="" && !isNaN(input.value) && input.value >0){
+
+            //2. Add the items to the budget controller
+            newItem=budgetCtrl.addItem(input.type,input.description,input.value);
+            //3. Add the item to the UI
+            UICtrl.addListItem(newItem,input.type);
+            //4. Clear fields
+            UICtrl.clearFields();
+            //5. Calculate and Update budget
+            updateBudget();
+        }
     };
 
     //creamos a public return function
