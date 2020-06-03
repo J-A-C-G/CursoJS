@@ -161,6 +161,24 @@ var UIController= (function(){
 
             //insert the HTML into the DOM(Data Object Manipulation)
             document.querySelector(element).insertAdjacentHTML('beforeend',newHtml);
+
+            
+        },
+
+        //clearFields
+
+        clearFields: function(){
+            var fields, fieldsArray;
+            fields=document.querySelectorAll(DOMstrings.inputDescription +','+ DOMstrings.inputValue);
+            //QuerySelectorAll return a list not an array (they have different methods)
+            //We going to convert a list into a array
+            //llamamos al metodo general de un Arreglo
+            fieldsArray=Array.prototype.slice.call(fields);
+            //foreach method
+            fieldsArray.forEach(function(current, index, array){
+                current.value="";
+            })
+            fieldsArray[0].focus();
         },
 
         //exponemos los DOMstrings al publico
@@ -211,6 +229,8 @@ var controller=(function(budgetCtrl, UICtrl){
         newItem=budgetCtrl.addItem(input.type,input.description,input.value);
         //3. Add the item to the UI
         UICtrl.addListItem(newItem,input.type);
+        //4. Clear fields
+        UICtrl.clearFields();
         //4. Calculate the budget
         //5. Display de budget total
 
