@@ -12,7 +12,9 @@
         1. Encapsulation
         2. IFI -> Data privacy creating a new scope
         3. Anonimus Fuctions
-        4.Scope
+        4. Scope
+        5. Insert data to the DOM
+
 */      
 /* -------------------------------------------------------------------------- */
 
@@ -96,6 +98,8 @@ var UIController= (function(){
         inputDescription: '.add__description',
         inputValue: '.add__value',
         inputBtn: '.add__btn',
+        incomeContainer: '.income__list',
+        expensesContainer: '.expenses__list',
     };
 
     return {
@@ -110,10 +114,53 @@ var UIController= (function(){
             */
            //creamos el objeto
            return{
-               type:document.querySelector(DOMstrings.inputType).value,
+               type: document.querySelector(DOMstrings.inputType).value,
                description: document.querySelector(DOMstrings.inputDescription).value,
                value: document.querySelector(DOMstrings.inputValue).value
            }
+        },
+
+        addListItem: function(obj, type){
+            //create HTML string with placeholder text
+            var html, element;
+            
+            if(type==='inc')
+            {
+                element= DOMstrings.incomeContainer;
+                //we going to use %simbols to identify the data that we going to change with real values
+                html='<div class = "item clearfix" id = "income-%id%"><div class = "item__description">%description%</div>'+
+                        '<div class = "right clearfix">'+
+                        '<div class = "item__value">%value%</div>'+
+                        '<div class = "item__delete">'+
+                        '<button class = "item__delete--btn">'+
+                        '<i class = "ion-ios-close-outline" ></i>'+
+                        '</button>'+
+                        '</div>'+
+                        '</div>'+
+                    '</div>';
+
+            }else if(type==='exp')
+            {
+                element=DOMstrings.expensesContainer;
+                html = '<div class = "item clearfix"id = "expense-%id% ">'+
+                            '<div class = "item__description"> %description% </div>'+
+                            '<div class = "right clearfix">'+
+                            '<div class = "item__value"> %value% </div>'+
+
+                            '<div class = "item__delete">'+
+                            '<button class = "item__delete--btn"> <i class = "ion-ios-close-outline"> </i></button>'+
+                            '</div>'+
+                            '</div>'+
+                        '</div>';
+            }        
+            //replace the placeholder text with some actual data
+            console.log(html);
+            var newHtml= html.replace('%id%', obj.id);
+            newHtml= newHtml.replace('%description%', obj.description);
+            newHtml= newHtml.replace('%value%', obj.value);
+
+            //insert the HTML into the DOM(Data Object Manipulation)
+            document.querySelector(element).insertAdjacentHTML('beforeend',newHtml);
         },
 
         //exponemos los DOMstrings al publico
@@ -163,7 +210,7 @@ var controller=(function(budgetCtrl, UICtrl){
         //2. Add the items to the budget controller
         newItem=budgetCtrl.addItem(input.type,input.description,input.value);
         //3. Add the item to the UI
-
+        UICtrl.addListItem(newItem,input.type);
         //4. Calculate the budget
         //5. Display de budget total
 
