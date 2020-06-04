@@ -56,8 +56,20 @@ var budgetController = (function ( /*aqui puede ir parametros*/ ) {
         totals:{//object
             exp:0,//array
             inc:0//array
-        }
+        },
+        budget:0,
+        porcentage: -1
+
     } ;
+
+    var calculateTotal= function (type) {
+        var sum=0;
+        data.allItems[type].forEach(function(curr){ //callback
+            sum=sum+ parseInt(curr.value);
+        });
+        data.totals[type]=sum;
+        
+    };
 
     return{
         addItem:function(type, des, val){
@@ -77,6 +89,29 @@ var budgetController = (function ( /*aqui puede ir parametros*/ ) {
             //Push into our data 
             data.allItems[type].push(newItem);
             return newItem;
+        },
+
+        calculateBudget: function() {
+            //calculate total income and expensives
+            calculateTotal('exp');
+            calculateTotal('inc');
+            //Calculate the budget: income - expensives
+            data.budget = data.totals.inc - data.totals.exp;
+            //Calculate the porcentage Ej: 15%
+            if(data.totals.exp>0){
+            data.porcentage = Math.round((data.totals.exp/data.totals.inc)*100);
+            }else{
+                data.porcentage=-1;
+            }
+        },
+
+        getBudget:function () {
+            return{
+                budget:data.budget,
+                totalInc:data.totals.inc,
+                totalExp:data.totals.exp,
+                percentage:data.porcentage,
+            }
         },
 
         testing: function(){
@@ -146,7 +181,7 @@ var UIController= (function(){
                             '<div class = "item__description"> %description% </div>'+
                             '<div class = "right clearfix">'+
                             '<div class = "item__value"> %value% </div>'+
-
+                            '< div class = "item__percentage" > %porcentage%% < /div>'*
                             '<div class = "item__delete">'+
                             '<button class = "item__delete--btn"> <i class = "ion-ios-close-outline"> </i></button>'+
                             '</div>'+
@@ -154,7 +189,6 @@ var UIController= (function(){
                         '</div>';
             }        
             //replace the placeholder text with some actual data
-            console.log(html);
             var newHtml= html.replace('%id%', obj.id);
             newHtml= newHtml.replace('%description%', obj.description);
             newHtml= newHtml.replace('%value%', obj.value);
@@ -173,7 +207,7 @@ var UIController= (function(){
             //QuerySelectorAll return a list not an array (they have different methods)
             //We going to convert a list into a array
             //llamamos al metodo general de un Arreglo
-            fieldsArray=Array.prototype.slice.call(fields);
+            fieldsArray= Array.prototype.slice.call(fields);
             //foreach method
             fieldsArray.forEach(function(current, index, array){
                 current.value="";
@@ -221,12 +255,14 @@ var controller=(function(budgetCtrl, UICtrl){
 
     //We create a new fuction to avoid RY
     //we going to use when we add & delete
-    var updateBudget=function () {
+    var updateBudget = function () {
 
         //1. Calculate the Budget
-
+        budgetController.calculateBudget();
         //2. Return the Budget
+        var budget = budgetCtrl.getBudget();
         //3. Display the budget on the UI
+        console.log(budget);
     }
 
 
@@ -241,9 +277,9 @@ var controller=(function(budgetCtrl, UICtrl){
         if(input.description !=="" && !isNaN(input.value) && input.value >0){
 
             //2. Add the items to the budget controller
-            newItem=budgetCtrl.addItem(input.type,input.description,input.value);
+            newItem=budgetCtrl.addItem(input.type, input.description, input.value);
             //3. Add the item to the UI
-            UICtrl.addListItem(newItem,input.type);
+            UICtrl.addListItem(newItem, input.type);
             //4. Clear fields
             UICtrl.clearFields();
             //5. Calculate and Update budget
