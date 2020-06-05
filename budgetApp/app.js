@@ -58,14 +58,14 @@ var budgetController = (function ( /*aqui puede ir parametros*/ ) {
             inc:0//array
         },
         budget:0,
-        porcentage: -1
+        percentage: -1
 
     } ;
 
     var calculateTotal= function (type) {
         var sum=0;
         data.allItems[type].forEach(function(curr){ //callback
-            sum=sum+ parseInt(curr.value);
+            sum = sum+ parseInt(curr.value);
         });
         data.totals[type]=sum;
         
@@ -97,11 +97,11 @@ var budgetController = (function ( /*aqui puede ir parametros*/ ) {
             calculateTotal('inc');
             //Calculate the budget: income - expensives
             data.budget = data.totals.inc - data.totals.exp;
-            //Calculate the porcentage Ej: 15%
+            //Calculate the percentage Ej: 15%
             if(data.totals.exp>0){
-            data.porcentage = Math.round((data.totals.exp/data.totals.inc)*100);
+            data.percentage = Math.round((data.totals.exp/data.totals.inc)*100);
             }else{
-                data.porcentage=-1;
+                data.percentage=-1;
             }
         },
 
@@ -110,7 +110,7 @@ var budgetController = (function ( /*aqui puede ir parametros*/ ) {
                 budget:data.budget,
                 totalInc:data.totals.inc,
                 totalExp:data.totals.exp,
-                percentage:data.porcentage,
+                percentage:data.percentage,
             }
         },
 
@@ -135,6 +135,10 @@ var UIController= (function(){
         inputBtn: '.add__btn',
         incomeContainer: '.income__list',
         expensesContainer: '.expenses__list',
+        budgetLabel:'.budget__value',
+        incomeLabel:'.budget__income--value',
+        expensesLabel:'.budget__expenses--value',
+        percentageLabel:'.budget__expenses--percentage',
     };
 
     return {
@@ -181,7 +185,7 @@ var UIController= (function(){
                             '<div class = "item__description"> %description% </div>'+
                             '<div class = "right clearfix">'+
                             '<div class = "item__value"> %value% </div>'+
-                            '< div class = "item__percentage" > %porcentage%% < /div>'*
+                            '< div class = "item__percentage" > %percentage%% < /div>'*
                             '<div class = "item__delete">'+
                             '<button class = "item__delete--btn"> <i class = "ion-ios-close-outline"> </i></button>'+
                             '</div>'+
@@ -189,9 +193,9 @@ var UIController= (function(){
                         '</div>';
             }        
             //replace the placeholder text with some actual data
-            var newHtml= html.replace('%id%', obj.id);
-            newHtml= newHtml.replace('%description%', obj.description);
-            newHtml= newHtml.replace('%value%', obj.value);
+            var newHtml = html.replace('%id%', obj.id);
+            newHtml = newHtml.replace('%description%', obj.description);
+            newHtml = newHtml.replace('%value%', obj.value);
 
             //insert the HTML into the DOM(Data Object Manipulation)
             document.querySelector(element).insertAdjacentHTML('beforeend',newHtml);
@@ -213,6 +217,23 @@ var UIController= (function(){
                 current.value="";
             })
             fieldsArray[0].focus();
+        },
+        
+        displayBudget:function (obj) {
+            
+            document.querySelector(DOMstrings.budgetLabel).textContent = obj.budget;
+            document.querySelector(DOMstrings.incomeLabel).textContent = obj.totalInc;
+            document.querySelector(DOMstrings.expensesLabel).textContent = obj.totalExp;
+            document.querySelector(DOMstrings.percentageLabel).textContent = obj.percentage;
+            //var gradientPercentage=obj.percentage;
+            //console.log('linear-gradient(128deg, white ' +gradientPercentage+ '%, white 51%, black 50%, black)');
+            //document.querySelector('.top').style.background = 'linear-gradient(128deg, white '+gradientPercentage+'%, white 51%, black 50%, black)';
+
+            if(obj.percentage>0){
+                document.querySelector(DOMstrings.percentageLabel).textContent = obj.percentage+'%';
+            }else{
+                document.querySelector(DOMstrings.percentageLabel).textContent = '---';
+            }
         },
 
         //exponemos los DOMstrings al publico
@@ -262,7 +283,7 @@ var controller=(function(budgetCtrl, UICtrl){
         //2. Return the Budget
         var budget = budgetCtrl.getBudget();
         //3. Display the budget on the UI
-        console.log(budget);
+        UICtrl.displayBudget(budget);
     }
 
 
@@ -274,10 +295,10 @@ var controller=(function(budgetCtrl, UICtrl){
         input=UICtrl.getInput();
 
         //input descripcion culd not be empty and input value needs to be a number
-        if(input.description !=="" && !isNaN(input.value) && input.value >0){
+        if(input.description !== " " && !isNaN(input.value) && input.value >0){
 
             //2. Add the items to the budget controller
-            newItem=budgetCtrl.addItem(input.type, input.description, input.value);
+            newItem = budgetCtrl.addItem(input.type, input.description, input.value);
             //3. Add the item to the UI
             UICtrl.addListItem(newItem, input.type);
             //4. Clear fields
@@ -290,7 +311,13 @@ var controller=(function(budgetCtrl, UICtrl){
     //creamos a public return function
     return {
         init:function () {
-            console.log('Aplication has started.');
+            console.log('Aplication has started...');
+            UICtrl.displayBudget({
+                budget: 0,
+                totalInc: 0,
+                totalExp: 0,
+                percentage: -1,
+            })
             setupEventListener();
         } 
     }
