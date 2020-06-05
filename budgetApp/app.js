@@ -181,15 +181,15 @@ var UIController= (function(){
             }else if(type==='exp')
             {
                 element=DOMstrings.expensesContainer;
-                html = '<div class = "item clearfix"id = "expense-%id% ">'+
+                html = '<div class = "item clearfix" id = "expense-%id%">'+
                             '<div class = "item__description"> %description% </div>'+
                             '<div class = "right clearfix">'+
                             '<div class = "item__value"> %value% </div>'+
-                            '< div class = "item__percentage" > %percentage%% < /div>'*
+                            '<div class = "item__percentage"> 21% </div>'+
                             '<div class = "item__delete">'+
                             '<button class = "item__delete--btn"> <i class = "ion-ios-close-outline"> </i></button>'+
                             '</div>'+
-                            '</div>'+
+                            '</div>'+ 
                         '</div>';
             }        
             //replace the placeholder text with some actual data
@@ -221,7 +221,7 @@ var UIController= (function(){
         
         displayBudget:function (obj) {
             
-            document.querySelector(DOMstrings.budgetLabel).textContent = obj.budget;
+            document.querySelector(DOMstrings.budgetLabel).textContent = '$  '+obj.budget;
             document.querySelector(DOMstrings.incomeLabel).textContent = obj.totalInc;
             document.querySelector(DOMstrings.expensesLabel).textContent = obj.totalExp;
             document.querySelector(DOMstrings.percentageLabel).textContent = obj.percentage;
@@ -239,6 +239,48 @@ var UIController= (function(){
         //exponemos los DOMstrings al publico
         getDOMstrings: function(){
             return DOMstrings;
+        },
+
+        displayDate:function () {
+            var date = new Date();
+            switch(date.getMonth()+1){
+                case 1: 
+                    return 'January'; 
+                    break;
+                case 2: 
+                    return'February';
+                    break;
+                case 3: 
+                    return 'March';
+                    break;
+                case 4: 
+                    return 'April';
+                    break;
+                case 5: 
+                    return 'May';
+                    break;
+                case 6:
+                    return 'June';
+                    break;
+                case 7: 
+                    return 'July';
+                    break;
+                case 8: 
+                    return 'August';
+                    break;
+                case 9: 
+                    return 'September';
+                    break;
+                case 10: 
+                    return 'October';
+                    break;
+                case 11: 
+                    return 'November';
+                    break;
+                case 12: 
+                    return 'December';
+                    break;
+            }
         }
     }
 
@@ -319,6 +361,9 @@ var controller=(function(budgetCtrl, UICtrl){
                 percentage: -1,
             })
             setupEventListener();
+
+            var date=UICtrl.displayDate();
+            document.querySelector('.budget__title--month').textContent=date;
         } 
     }
 
