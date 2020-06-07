@@ -1,4 +1,4 @@
-UIController
+
 
 /* -------------------------------------------------------------------------- */
 /*      1. Vamos a implementar el patron de diseño Module-Patter en JS       
@@ -27,6 +27,10 @@ UIController
 */
 /* -------------------------------------------------------------------------- */
 
+/* --------- variable que almacena el valor del key de localStorage --------- */
+
+var localStorageKeyName = 'key';
+
 var budgetController = (function ( /*aqui puede ir parametros*/ ) {
 
     //Aqui vamos a crear los constructores
@@ -50,6 +54,7 @@ var budgetController = (function ( /*aqui puede ir parametros*/ ) {
     */
 
     //es mejor guardar el data asi
+
     var data={//object
         allItems:{//object
             exp:[],//array
@@ -62,8 +67,12 @@ var budgetController = (function ( /*aqui puede ir parametros*/ ) {
         budget:0,
         percentage: -1
 
+
+        
+
     } ;
 
+    
     var calculateTotal= function (type) {
         var sum=0;
         data.allItems[type].forEach(function(curr){ //callback
@@ -90,7 +99,12 @@ var budgetController = (function ( /*aqui puede ir parametros*/ ) {
             }
             //Push into our data 
             data.allItems[type].push(newItem);
+
+            //Save into LocalStorage
+            this.updateLocalStorage(data);
+
             return newItem;
+
         },
 
        deleteItem: function (type, id) {
@@ -117,7 +131,8 @@ var budgetController = (function ( /*aqui puede ir parametros*/ ) {
            if (index !== -1) {
                data.allItems[type].splice(index, 1);    
            }
-
+           //actualiza LocaStorage
+            this.updateLocalStorage(data);
        },
 
         calculateBudget: function() {
@@ -144,8 +159,29 @@ var budgetController = (function ( /*aqui puede ir parametros*/ ) {
             }
         },
 
+        /* ------ Guarda el obj data en localstorage ----- */
+        updateLocalStorage:function (obj) {
+            
+            localStorage.setItem(localStorageKeyName, JSON.stringify(obj));
+            //console.log(localStorage.getItem(localStorageKeyName));
+            this.loadFromLocalStorage();
+        },
+
+
+        /* ------ Guarda la informacion obtenida de localStorage en el obj data ----- */
+
+        loadFromLocalStorage: function (){
+             
+            var dataInLocalStorage = localStorage.getItem(localStorageKeyName);
+             if (dataInLocalStorage !== null) {
+                 data = JSON.parse(dataInLocalStorage);
+             }  
+             return data;
+         },
+
         testing: function(){
             console.log(data);
+            console.log('retrievedObject: ', JSON.parse(retrievedObject));
         }
     }
 
@@ -195,7 +231,8 @@ var UIController= (function(){
         addListItem: function(obj, type){
             //create HTML string with placeholder text
             var html, element;
-            
+               
+
             if(type==='inc')
             {
                 element= DOMstrings.incomeContainer;
@@ -234,6 +271,7 @@ var UIController= (function(){
             document.querySelector(element).insertAdjacentHTML('beforeend',newHtml);
 
             
+            
         },
 
         //Delete item from the UI
@@ -269,7 +307,7 @@ var UIController= (function(){
             document.querySelector(DOMstrings.percentageLabel).textContent = obj.percentage;
             //var gradientPercentage=obj.percentage;
             //console.log('linear-gradient(128deg, white ' +gradientPercentage+ '%, white 51%, black 50%, black)');
-            //document.querySelector('.top').style.background = 'linear-gradient(128deg, white '+gradientPercentage+'%, white 51%, black 50%, black)';
+            
 
             if(obj.percentage>0){
                 document.querySelector(DOMstrings.percentageLabel).textContent = obj.percentage+'%';
@@ -370,6 +408,12 @@ var controller=(function(budgetCtrl, UICtrl){
         var budget = budgetCtrl.getBudget();
         //3. Display the budget on the UI
         UICtrl.displayBudget(budget);
+
+        var blue=100-budget.percentage;
+        var red=budget.percentage;
+
+        //display gradient background
+        document.querySelector('.top').style.background = 'linear-gradient(128deg, rgb(0, 116, 179)' + blue + '%, rgb(229,9,20)' + blue +'%, rgb(229, 9, 20)'+red+'%)';
     }
 
 
@@ -384,6 +428,7 @@ var controller=(function(budgetCtrl, UICtrl){
         if(input.description !== " " && !isNaN(input.value) && input.value >0){
 
             //2. Add the items to the budget controller
+
             newItem = budgetCtrl.addItem(input.type, input.description, input.value);
             //3. Add the item to the UI
             UICtrl.addListItem(newItem, input.type);
@@ -402,8 +447,11 @@ var controller=(function(budgetCtrl, UICtrl){
          to: < div class = "item clearfix" id = "income-0" >
          in order to get the id income-0
          */
+        console.log(event);
          itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
-
+        //tenemos que poner la informacion en un if por que el addeventlistener esta relacionado a la clase container
+        //y se activa en cualquiera de sus hijos tenemos que validar que sea el icono eliminar
+        //validamos por que es el unico q tiene un id
          if (itemID) {
              //inc-1
              splitID = itemID.split('-');
@@ -424,21 +472,36 @@ var controller=(function(budgetCtrl, UICtrl){
          }
     }  
 
+
+
     //creamos a public return function
     return {
         init:function () {
             console.log('Aplication has started...');
-            UICtrl.displayBudget({
+           
+            /*UICtrl.displayBudget({
                 budget: 0,
                 totalInc: 0,
                 totalExp: 0,
                 percentage: -1,
-            })
+            })*/
+            
             setupEventListener();
 
             var date=UICtrl.displayDate();
             document.querySelector('.budget__title--month').textContent=date;
-            
+
+
+            var data = budgetCtrl.loadFromLocalStorage();
+            updateBudget();
+            var arrayInc = data.allItems.inc;
+            arrayInc.forEach(function (current) {
+                UICtrl.addListItem(current, 'inc');
+            })
+            var arrayExp = data.allItems.exp;
+            arrayExp.forEach(function (current) {
+                UICtrl.addListItem(current, 'exp');
+            })
         } 
     }
 
