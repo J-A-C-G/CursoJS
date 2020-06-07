@@ -242,7 +242,7 @@ var UIController= (function(){
                         '<div class = "item__value">%value%</div>'+
                         '<div class = "item__delete">'+
                         '<button class = "item__delete--btn">'+
-                        '<i class = "ion-ios-close-outline" ></i>'+
+                        '<span class="material-icons">close</span>'+
                         '</button>'+
                         '</div>'+
                         '</div>'+
@@ -257,7 +257,7 @@ var UIController= (function(){
                             '<div class = "item__value"> %value% </div>'+
                             '<div class = "item__percentage"> 21% </div>'+
                             '<div class = "item__delete">'+
-                            '<button class = "item__delete--btn"> <i class = "ion-ios-close-outline"> </i></button>'+
+                            '<button class = "item__delete--btn"><span class="material-icons">close</span></button>'+
                             '</div>'+
                             '</div>'+ 
                         '</div>';
@@ -485,7 +485,7 @@ var controller=(function(budgetCtrl, UICtrl){
                 totalExp: 0,
                 percentage: -1,
             })*/
-            
+
             setupEventListener();
 
             var date=UICtrl.displayDate();
