@@ -40,7 +40,7 @@ var budgetController = (function ( /*aqui puede ir parametros*/ ) {
         this.percentage = -1;
     };
 
-    
+
     var Income = function (id, description, value) {
         this.id = id;
         this.description = description;
@@ -190,10 +190,10 @@ var budgetController = (function ( /*aqui puede ir parametros*/ ) {
             c=40/100=40%
             */
             data.allItems.exp.forEach(function (cur) {
-                
+
                 budgetController.calcExpensePercentage(data.totals.inc, cur);
             });
-            
+
         },
 
 
@@ -229,10 +229,10 @@ var budgetController = (function ( /*aqui puede ir parametros*/ ) {
                 console.log("this is the new data")
                 console.log(JSON.stringify(data));
                 data = JSON.parse(dataInLocalStorage);
-                
+
                 return data;
             }
-            
+
         },
 
         testing: function () {
@@ -295,6 +295,12 @@ var UIController = (function () {
 
     };
 
+    var nodeListForEach = function (list, callback) {
+        for (var i = 0; i < list.length; i++) {
+            callback(list[i] /*Elemento*/ , i /*Index*/ );
+        }
+    };
+
     return {
         getInput: function () {
 
@@ -348,9 +354,9 @@ var UIController = (function () {
             //replace the placeholder text with some actual data
             var newHtml = html.replace('%id%', obj.id);
             newHtml = newHtml.replace('%description%', obj.description);
-            newHtml = newHtml.replace('%value%', formatNumber(obj.value,type));
-            if(type==='exp'){
-                newHtml = newHtml.replace('%per%',obj.percentage+'%');
+            newHtml = newHtml.replace('%value%', formatNumber(obj.value, type));
+            if (type === 'exp') {
+                newHtml = newHtml.replace('%per%', obj.percentage + '%');
             }
 
             //insert the HTML into the DOM(Data Object Manipulation)
@@ -390,8 +396,8 @@ var UIController = (function () {
             var type;
             obj.budget > 0 ? type = 'inc' : type = 'exp';
             document.querySelector(DOMstrings.budgetLabel).textContent = '$  ' + formatNumber(obj.budget, type);
-            document.querySelector(DOMstrings.incomeLabel).textContent = formatNumber(obj.totalInc,'inc');
-            document.querySelector(DOMstrings.expensesLabel).textContent = formatNumber(obj.totalExp,'exp');
+            document.querySelector(DOMstrings.incomeLabel).textContent = formatNumber(obj.totalInc, 'inc');
+            document.querySelector(DOMstrings.expensesLabel).textContent = formatNumber(obj.totalExp, 'exp');
             document.querySelector(DOMstrings.percentageLabel).textContent = obj.percentage;
             //var gradientPercentage=obj.percentage;
             //console.log('linear-gradient(128deg, white ' +gradientPercentage+ '%, white 51%, black 50%, black)');
@@ -409,11 +415,6 @@ var UIController = (function () {
             //return a node List
             var fields = document.querySelectorAll(DOMstrings.expensesPercLabel);
             //nodeList does not have a forEach method so we are going to create our own foreach method for nodes
-            var nodeListForEach = function (list, callback) {
-                for (var i = 0; i < list.length; i++) {
-                    callback(list[i] /*Elemento*/ , i /*Index*/ );
-                }
-            };
 
             nodeListForEach(fields, function (current, index) {
 
@@ -431,48 +432,64 @@ var UIController = (function () {
             return DOMstrings;
         },
 
+        changedType: function () {
+            //3 class names separate by commas
+            var fields = document.querySelectorAll(
+                DOMstrings.inputType + ',' +
+                DOMstrings.inputDescription + ',' +
+                DOMstrings.inputValue);
+
+            //return a nodeList
+            nodeListForEach(fields, function (cur) {
+                cur.classList.toggle('red-focus');
+            });
+
+            document.querySelector(DOMstrings.inputBtn).classList.toggle('red');
+
+        },
+
         displayDate: function () {
             var date, month, year
-            
+
             date = new Date();
-            month=date.getMonth();
-            year=date.getFullYear();
+            month = date.getMonth();
+            year = date.getFullYear();
             switch (month + 1) {
                 case 1:
-                    return 'January'+' '+year;
+                    return 'January' + ' ' + year;
                     break;
                 case 2:
-                    return 'February'+' '+year;
+                    return 'February' + ' ' + year;
                     break;
                 case 3:
-                    return 'March'+' '+year;
+                    return 'March' + ' ' + year;
                     break;
                 case 4:
-                    return 'April'+' '+year;
+                    return 'April' + ' ' + year;
                     break;
                 case 5:
-                    return 'May'+' '+year;
+                    return 'May' + ' ' + year;
                     break;
                 case 6:
-                    return 'June'+' '+year;
+                    return 'June' + ' ' + year;
                     break;
                 case 7:
-                    return 'July'+' '+year;
+                    return 'July' + ' ' + year;
                     break;
                 case 8:
-                    return 'August'+' '+year;
+                    return 'August' + ' ' + year;
                     break;
                 case 9:
-                    return 'September'+' '+year;
+                    return 'September' + ' ' + year;
                     break;
                 case 10:
-                    return 'October'+' '+year;
+                    return 'October' + ' ' + year;
                     break;
                 case 11:
-                    return 'November'+' '+year;
+                    return 'November' + ' ' + year;
                     break;
                 case 12:
-                    return 'December'+' '+year;
+                    return 'December' + ' ' + year;
                     break;
             }
         }
@@ -510,6 +527,7 @@ var controller = (function (budgetCtrl, UICtrl) {
         });
 
         document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
+        document.querySelector(DOM.inputType).addEventListener('change', UICtrl.changedType);
     }
 
     //We create a new fuction to avoid RY
